@@ -15,9 +15,12 @@ Un_truc *creer_truc(Une_coord coord, Ttype type, Tdata data, double uv)
 
 void detruire_truc(Un_truc *truc)
 {
-    Un_truc *ptruc = truc;
-    if(ptruc->type == 0) /* si c'est une station */
-    {
-        free(ptruc->data->nom);
+     /* si c'est une station */
+    if (truc->type == 0) {
+        free(truc->data.sta.nom);
+        for (int i = 0; truc->data.sta.tab_con[i] != NULL; i++)
+            free(truc->data.sta.tab_con[i]);
+        free(truc->data.sta.tab_con); // à vérifer si nécessaire
     }
+    free(truc);
 }

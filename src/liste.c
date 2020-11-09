@@ -5,21 +5,21 @@
 #include <stdio.h>
 
 
-Un_elem *inserer_liste_trie(Un_elem *liste, Un_truc *truc)
+Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
 {
     /* on veut inserer le truc dans la liste de maniere croissante*/
 
-    Un_elem *current = liste;
+    Un_elem *current = head;
 
     Un_elem *element;
     element->truc = truc;
 
     /* si la liste est nulle ou si l'element a inserer a un user_val plus grand que la tete de liste, on ajoute au debut*/
 
-    if((liste == NULL) || (truc->user_val > liste->truc->user_val))
+    if((head == NULL) || (truc->user_val > head->truc->user_val))
     {
-        element->suiv = liste;
-        liste = element;
+        element->suiv = head;
+        head = element;
     }
     
     /* si l'element a inserer est au milieu de la liste ou a la fin, alors on parcourt jusqu'au bon rand de user_valur 
@@ -34,13 +34,18 @@ Un_elem *inserer_liste_trie(Un_elem *liste, Un_truc *truc)
         element->suiv = current->suiv;
         current->suiv = element;
     }
-    return liste;
+    return head;
 }
 
-void ecrire_liste(FILE *flux, Un_elem *liste)
+void ecrire_liste(FILE *flux, Un_elem *head)
 {
     /* on veut afficher les trucs correspondants a des stations */
-    
-
+    Un_elem *current = head;
+    while (current->suiv != NULL) {
+        if (current->truc->type == 0) {
+            printf("%s\n", current->truc->data.sta.nom);
+        }
+        current = current->suiv;
+    }
 }
 
