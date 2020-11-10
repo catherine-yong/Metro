@@ -49,3 +49,13 @@ void ecrire_liste(FILE *flux, Un_elem *head)
     }
 }
 
+Un_elem* inserer_ded_liste(Un_elem* liste, Un_truc* truc)
+{
+  
+    Un_elem * nouv = (Un_elem *)malloc(sizeof(Un_elem));
+    nouv -> truc = truc ;
+    nouv -> suiv = liste;
+    return (nouv);
+}
+//fonction à tester ! pas encore testé
+
