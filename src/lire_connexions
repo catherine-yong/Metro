@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "liste.h"
+#include "lignes.h"
+#include "ABR.h"
+
+Un_elem* lire_connexions(/*char* nom_fichier*/ /*Une_ligne* liste_ligneUn_nabr* arb_sta*/)
+{
+       /*-- ouverture du fichier --*/
+       
+       FILE* fichier;
+       fichier = fopen ("connexion.csv", "rt");
+       
+       if(fichier == NULL)
+       {
+           printf("ouverture impossible du fichier \n");
+           return 0;
+       }
+       
+       
+               /*-- lecture du fichier --*/
+       
+       char ligne[100]; /* 200 est le nombre de caractère maximal d'une ligne */
+       const char* separator = ";";
+       char* ptr_chaine;/* on définit un pointeur pour récuperer le "token"*/
+       
+
+       while(fgets(ligne,100,fichier) != NULL)
+       {
+           ptr_chaine = strtok (ligne, separator);
+           while (ptr_chaine != NULL)
+           {
+               printf ("%s \t", ptr_chaine);
+               ptr_chaine = strtok (NULL, separator);
+           }
+           printf("\n");
+       }
+       fclose(fichier);
+       
+    return 0;
+}
+
+int main()
+{
+    lire_connexions();
+    return 0;
+}
