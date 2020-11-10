@@ -1,3 +1,5 @@
+
+#include "lire_lignes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -67,9 +69,9 @@ void detruire_lignes(Une_ligne** lligne)
         free(*lligne);
         *lligne =tmp;
     }
-}
+}// pas encore tester
 
-Une_ligne* lire_ligne()
+Une_ligne* lire_ligne() // pas fini !!!!
 {
 
     FILE* fichier;
@@ -82,7 +84,7 @@ Une_ligne* lire_ligne()
     }
        
        
-    char ligne[100]; /* 200 est le nombre de caractère maximal d'une ligne */
+    char ligne[100]; /* 100 est le nombre de caractère maximal d'une ligne */
     const char* separator = ";";
     char* ptr_chaine = NULL;/* on définit un pointeur pour récuperer le "token"*/
        
@@ -92,10 +94,13 @@ Une_ligne* lire_ligne()
     while(fgets(ligne,100,fichier) != NULL)
     {
         ptr_chaine = strtok (ligne, separator);
-        char* a = ptr_chaine;
-        ptr_chaine = strtok (NULL, separator);
-        printf("%s \n", a);//ici quand j'affiche a sa donne 1,2,3,etc
-
+        while (ptr_chaine != NULL)
+        {
+            printf ("%s \t", ptr_chaine);
+            fscanf(fichier,"%s %s %f %f", L-> code,L->color, L-> intervalle, L->vitesse);
+            ptr_chaine = strtok (NULL, separator);
+        }
+        printf("\n");
     }
     fclose(fichier);
        
@@ -118,11 +123,11 @@ Une_ligne* chercher_ligne(Une_ligne* lligne, char* code)
     {
         return lligne;
     }
-}
+}// pas encore tester !
 
 int main()
 {
+
     lire_ligne();
     return 0; 
 }
-
