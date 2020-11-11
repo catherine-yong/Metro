@@ -60,17 +60,21 @@ void affiche_lignes(Une_ligne * lligne)
 }
 
 //fonction pour désallouer la mémoire;
-void detruire_lignes(Une_ligne** lligne)
+void detruire_lignes(Une_ligne* lligne)
 {
-    Une_ligne *tmp;
-    while(*lligne)
+    Une_ligne* L = lligne;
+    while (L != NULL)
     {
-        tmp = (*lligne)->suiv;
-        free(*lligne);
-        *lligne =tmp;
+        lligne = L;
+        free(L->code);
+        free(L->color);
+        free(&(L->intervalle));
+        free(&(L->vitesse));
+        L = lligne -> suiv;
     }
 }// pas encore tester
 
+//fonction lire lignes; 
 Une_ligne* lire_ligne() // pas fini !!!!
 {
 
@@ -107,6 +111,8 @@ Une_ligne* lire_ligne() // pas fini !!!!
     return 0;
 }
 
+
+//fonction pour chercher une ligne en fct de son code; 
 Une_ligne* chercher_ligne(Une_ligne* lligne, char* code)
 {
     char* c;
