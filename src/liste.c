@@ -49,13 +49,30 @@ void ecrire_liste(FILE *flux, Un_elem *head)
     }
 }
 
-Un_elem* inserer_ded_liste(Un_elem* liste, Un_truc* truc)
+void detruire_liste(Un_elem *head)
 {
-  
-    Un_elem * nouv = (Un_elem *)malloc(sizeof(Un_elem));
-    nouv -> truc = truc ;
-    nouv -> suiv = liste;
-    return (nouv);
+    /* on veut detruire une liste chainee de trucs */
+    Un_elem *temp;
+    Un_elem *ptr = head;
+    while(ptr)
+    {
+        temp = ptr->suiv;
+        free(ptr);
+        ptr = temp;
+    }
 }
-//fonction à tester ! pas encore testé
+
+void detruire_liste_et_truc(Un_elem *head)
+{
+    /* pour chaque maillon de la liste, on detruit son contenu */
+    /* on prend un element temporaire qui stocke la case d'apres pour ensuite detruire le contenu de la case courante */
+    Un_elem *temp;
+    while(head)
+    {
+        temp = head->suiv;
+        detruire_truc(head->truc);
+        free(head);
+        head = temp;
+    }
+}
 
