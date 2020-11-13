@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include "truc.h"
+#include "liste.h"
+
+void dijkstra (Un_elem* liste_sta, Un_truc* sta_dep)
+{
+    /* initialisation de la valeur à la station d'origine */
+    sta_dep = (Un_truc*)malloc(sizeof(Un_truc));
+    sta_dep -> user_val = 0.0;
+    
+    
+    
+    /* initialisation des autres stations */
+    liste_sta = (Un_elem*)malloc(sizeof(Un_elem));
+    liste_sta -> truc -> user_val = INT_MAX;// infini
+    
+    
+    
+    /* trie par ordre croissant en fonction des valeurs de user_val */
+    typedef struct _un_elem
+    {
+        Un_truc* sta_dep;
+        Un_elem* liste_sta;
+    }Q;
+
+    Q* nouv = (Q*) malloc(sizeof(Q));
+    
+    /* 4) */
+    
+    while (nouv != NULL)
+    {
+        extraire_deb_liste(&sta_dep);
+        /* 5) */
+        
+    }
+    
+    
+    
+}
+
