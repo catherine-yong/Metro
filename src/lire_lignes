@@ -1,177 +1,210 @@
-
-#include "lire_lignes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include "lignes.h"
 
+#define NB_LIGNES 100
 
-//fonction pour ajouter une valeur au debut ;
-Une_ligne * ajouter_debut(Une_ligne * L, char* a, char* b, float c, float d)
+
+void afficher_lignes(Une_ligne *head)
 {
+    while (head)
+    {
+        printf("\n code :%s", head->code);
+        printf("\n vitesse : %.2f", head->vitesse);
+        printf("\n intervalle : %.2f", head->intervalle);
+        printf("\n couleur : %s \n\n", head->color);
+        head = head -> suiv;
+    }
+}
+//fonction pour ajouter une valeur au debut ;
+
+Une_ligne *ajouter_debut(Une_ligne * head, char* code, char* color, float intervalle, float vitesse)
+{
+   // printf("fct ajouter debut : %s \n", code);
     Une_ligne * nouv = (Une_ligne *) malloc (sizeof(Une_ligne));
-    nouv -> code = a;
-    nouv -> color = b;
-    nouv -> intervalle = c;
-    nouv -> vitesse = d;
-    nouv -> suiv = L; /*suivant pointe sur tete*/
+    nouv -> code = code;
+    nouv -> color = color;
+    nouv -> intervalle = intervalle;
+    nouv -> vitesse = vitesse;
+    nouv -> suiv = head; /*suiv pointe sur tete*/
+    
+
     return (nouv);
 }
 
-
 //fonction pour ajouter une valeur à la fin ;
-Une_ligne * ajouter_fin(Une_ligne * L, char* a, char* b, float c, float d)
+
+Une_ligne * ajouter_fin(Une_ligne* head, char* code, char* color, float intervalle, float vitesse)
 {
-    if (L == NULL)
+    if (!head)
     {
-        L = ajouter_debut(L, a, b, c, d);
+        head = ajouter_debut(head, code, color, intervalle, vitesse);
+        //printf("fct ajouter fin le IF : %s \n", code);
     }
     else
     {
-        Une_ligne * nouv = (Une_ligne *) malloc (sizeof (Une_ligne));
-        nouv -> code = a;
-        nouv -> color = b;
-        nouv -> intervalle = c;
-        nouv -> vitesse = d;
+        Une_ligne *nouv = (Une_ligne *) malloc (sizeof (Une_ligne));
+        nouv -> code = code;
+        nouv -> color = color;
+        nouv -> intervalle = intervalle;
+        nouv -> vitesse = vitesse;
         nouv -> suiv = NULL;/*car c'est le dernier il n'y a pas de suivant*/
         
-        Une_ligne * temp = L;
-        while (temp -> suiv != NULL)
+        Une_ligne* temp = head;
+        while (temp->suiv)
         {
-            temp = temp -> suiv;
+            temp = temp->suiv;
         }
-        temp -> suiv = nouv;
+        temp->suiv = nouv;
+        //printf("fct ajouter debut ELSE : %s \n", code);
     }
-    return (L);
+    return (head);
 }
 
-//fonction pour affichier la liste;
-void affiche_lignes(Une_ligne * lligne)
-{
-    Une_ligne * L = lligne;
-    while (L != NULL)
-    {
-        printf("%s", L -> code);
-        printf("%s", L -> color);
-        printf("%f", L -> intervalle);
-        printf("%f", L -> vitesse);
-        L = L -> suiv;
-    }
-}
+//fonction pour afficher la liste;
+
 
 //fonction pour désallouer la mémoire;
-void detruire_lignes(Une_ligne* lligne)
+
+void detruire_lignes(Une_ligne* head)
 {
-    Une_ligne* L = lligne;
-    while (L != NULL)
+    Une_ligne* phead = head;
+    while (phead)
     {
-        lligne = L;
-        free(L->code);
-        free(L->color);
-        free(&(L->intervalle));
-        free(&(L->vitesse));
-        L = lligne -> suiv;
+        head = phead;
+        free(phead->code);
+        free(phead->color);
+        free(&(phead->intervalle));
+        free(&(phead->vitesse));
+        phead = phead -> suiv;
     }
 }// pas encore tester
 
-//fonction lire lignes; 
-Une_ligne* lire_ligne() // pas fini !!!!
+//fonction lire lignes;
+
+Une_ligne* lire_ligne(char* nom_fichier)
 {
+    FILE* fichier ;
+    char ligne[NB_LIGNES];
+    char* ptr_chaine ;
+    Une_ligne* head = NULL;
 
-    FILE* fichier;
-    fichier = fopen ("ligne_metro.csv", "rt");
-       
-    if(fichier == NULL)
+    
+    // notre fichier lignes_metro.csv a 3 cellules : vitesse, intervalle et couleur
+
+    char* code = NULL;
+    code = (char*) malloc (sizeof (char));
+    float vitesse = 0.0;
+    float intervalle = 0.0;
+    char* color = NULL;
+    color = (char*) malloc (sizeof (char));
+
+    //on ouvre le fichier csv
+
+    fichier = fopen( "lignes_met.csv", "r") ;
+    
+    if (fichier == NULL)
     {
-        printf("ouverture impossible du fichier \n");
-        return 0;
+        printf("Ouverture du fichier impossible");
+        exit(0);
     }
-       
-       
-    char ligne[100]; /* 100 est le nombre de caractère maximal d'une ligne */
-    const char* separator = ";";
-    char* ptr_chaine = NULL;/* on définit un pointeur pour récuperer le "token"*/
-       
 
-    Une_ligne* L = NULL;
-    L = malloc(sizeof(L));/*on créé un nouvelle élément*/
-    while(fgets(ligne,100,fichier) != NULL)
+    // on lit le fichier ligne par ligne
+    
+    while (fgets( ligne, NB_LIGNES, fichier) != NULL)
     {
-        ptr_chaine = strtok (ligne, separator);
-        while (ptr_chaine != NULL)
+         
+        // on appelle la fonction strtok et on initialise ptr_chaine
+
+        ptr_chaine = strtok (ligne, ";");
+
+        // code métro
+
+        if (sscanf(ptr_chaine,"%s",code) != 1)
         {
-            printf ("%s \t", ptr_chaine);
-            fscanf(fichier,"%s %s %f %f", L-> code,L->color, L-> intervalle, L->vitesse);
-            ptr_chaine = strtok (NULL, separator);
+            puts("\n Problème lors de la lecture");
+            code[0] = 19;
         }
-        printf("\n");
-    }
-    fclose(fichier);
-       
-    return 0;
-    
-    
-    
-    //bout de code qui peuvent etre utiles : 
-    /*FILE* fichier;
-    fichier = fopen ("ligne_metro.csv", "rt");
-       
-    if(fichier == NULL)
-    {
-        printf("ouverture impossible du fichier \n");
-        return 0;
-    }
-    
-    char ligne[100];
-    
-    Une_ligne* New= malloc(sizeof(Une_ligne));
-    New->suiv = NULL;  // Le dernier élément pointe sur rien.
- 
-  // Allocation mémoire pour les valeurs
-    New-> code = (char*)malloc(sizeof(char)*strlen(a));
-    New-> color = (char*)malloc(sizeof(char)*strlen(b));
-    New-> intervalle = *(float*)malloc(sizeof(d));
-    New-> vitesse = *(float*)malloc(sizeof(d));
-    Une_ligne* Tmp = liste;
+        ptr_chaine = strtok (NULL, ";");
+        
+        // vitesse
 
-
-    memcpy(New->code, a, sizeof(char)*strlen(a));
-    memcpy(New->color, b, sizeof(char)*strlen(b));*/
-    
-     /* while (fgets(ligne,100,fichier) != NULL)
+        if (sscanf(ptr_chaine,"%2f", &vitesse) != 1)
         {
-          a = strtok(ligne,";");
-          b = strtok(NULL,";");
-          c = strtok(ligne,";");
-          d = strtok(NULL,";");
-          liste=add_element(liste,a,b,c,d);
-        }*/
+            puts("\n Problème lors de la lecture");
+            vitesse = -1.0;
+        }
+        ptr_chaine = strtok (NULL, ";");
 
-}
+        // intervalle
+        
+        if (sscanf(ptr_chaine,"%2f", &intervalle) != 1)
+        {
+            puts("\n Problème lors de la lecture");
+            intervalle = -1.0;
+        }
+        ptr_chaine = strtok (NULL, ";");
+        
+        // couleur
 
-
-//fonction pour chercher une ligne en fct de son code; 
-Une_ligne* chercher_ligne(Une_ligne* lligne, char* code)
-{
-    char* c;
-    while (strcmp(c, code) && lligne != NULL)
-    {
-        lligne = lligne -> suiv;
+        if (sscanf(ptr_chaine,"%s", color) != 1)
+        {
+            puts("\n Problème lors de la lecture");
+            color[0] = 0;
+        }
+        ptr_chaine = strtok (NULL, ";");
+        
+        head = ajouter_fin(head,code,color,intervalle,vitesse);
+        //printf("fct lire ligne WHILE : %s \n", code);
+        afficher_lignes(head);
     }
     
-    if (lligne == NULL)
-    {
-        return NULL;
-    }
-    else
-    {
-        return lligne;
-    }
-}// pas encore tester !
-
-int main()
-{
-
-    lire_ligne();
-    return 0; 
+    //fermeture du fichier
+    fclose(fichier);
+    //printf("fct lire ligne : %s \n", code);
+    //printf("\nFICHIER \n");
+    //afficher_lignes(head);
+    return head;
 }
+
+//fonction pour chercher une ligne en fct de son code;
+
+Une_ligne* chercher_ligne(Une_ligne* lligne,char* code1 )
+{
+    Une_ligne* head = lligne;
+    printf("        AFFICHE   \n");
+    afficher_lignes(lligne);
+    // tant que la liste n'est pas finie
+    while (head != NULL)
+    {
+        //printf("code = %s \n", head->code);
+        //c = strcmp(head->code, code1);
+        //printf("c = %d \n", c);
+        if (strcmp(code1, head->code) == 0)
+        {
+            printf("\n\n    dans 3  \n");
+            return head;
+        }
+        head = head->suiv;
+    }
+    return NULL;
+
+}
+
+int main(int argc, char **argv)
+{
+    
+    Une_ligne* ligne;
+    ligne = lire_ligne("../lignes_met.csv");
+    
+    //ligne = chercher_ligne(ligne, "M3");
+    //printf("\n DANS LE MAIN \n");
+    //afficher_lignes(ligne);
+    
+    
+    return 0;
+}
+
