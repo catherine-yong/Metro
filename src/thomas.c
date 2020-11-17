@@ -83,8 +83,8 @@ Une_ligne* lire_lign(char* nom_fichier)
     
     char ligne[NB_LIGNES];
     char* ptr_chaine = fgets(ligne, NB_LIGNES, fichier);
-    Une_ligne* head = NULL;
-    Une_ligne* phead = NULL;
+    Une_ligne* head = malloc (sizeof(Une_ligne));
+    Une_ligne* phead = head;
     int i=0;
     int j=0;
     
@@ -119,7 +119,7 @@ Une_ligne* lire_lign(char* nom_fichier)
         i++;
     }
     i++;
-    j = 0;
+    j=0;
     
     while (ligne[i] != '\0')
     {
@@ -194,8 +194,10 @@ Une_ligne* lire_lign(char* nom_fichier)
         phead = phead -> suiv;
     }
     fclose (fichier);
+    afficher_lignes(head);
     return (head);
 }
+
 
     
     
