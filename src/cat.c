@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ligne.h"
-
-#define NB_LIGNES 100
+#include "lignes.h"
 
 
 Une_ligne *create(char *code_, char *color_, float intervalle_, float vitesse_)
@@ -16,7 +14,7 @@ Une_ligne *create(char *code_, char *color_, float intervalle_, float vitesse_)
     nouv-> color = color_;
     nouv -> intervalle = intervalle_;
     nouv -> vitesse = vitesse_;
-    nouv -> suiv = NULL; 
+    nouv -> suiv = NULL;
 
     return nouv;
 }
@@ -48,19 +46,18 @@ Une_ligne *ajout(Une_ligne *head, char *code_, char *color_, float intervalle_, 
 
 //fonction pour afficher la liste;
 
+//fonction pour afficher la liste;
 void afficher_lignes(Une_ligne *head)
 {
-    Une_ligne *ptr = head;
-    
-    while(ptr != NULL)
+    while (head)
     {
-    printf("code : %s\n", ptr->code);
-    printf("couleur : %s\n", ptr->color);
-    printf("intervalle : %.2f\n", ptr->intervalle);
-    printf("vitesse : %.2f\n\n", ptr->vitesse);
-    ptr = ptr -> suiv;
+        printf("\n code :%s", head->code);
+        printf("\n vitesse : %.2f", head->vitesse);
+        printf("\n intervalle : %.2f", head->intervalle);
+        printf("\n couleur : %s \n\n", head->color);
+        head = head -> suiv;
     }
-    
+
 }
 
 //fonction pour désallouer la mémoire;
@@ -80,66 +77,91 @@ void detruire_lignes(Une_ligne* head)
     }
 }// pas encore tester
 
-//fonction lire lignes; 
+//fonction lire lignes;
 
-Une_ligne *lire_ligne()
+Une_ligne *lire_ligne(char *nom_fichier)
 {
     FILE* fichier ;
-    char ligne[NB_LIGNES];
-    char *ptr_chaine ; 
-    Une_ligne *head = NULL;
+    Une_ligne *head = (Une_ligne*) malloc (sizeof(Une_ligne));
 
-    char *code = (char *)malloc(sizeof(char)*4);
-    char *couleur = (char *)malloc(sizeof(char)*20);
-    double vitesse;
-    double intervalle;
     
-    const char *separator = ";";
+    //on ouvre le fichier csv
 
-    //on ouvre le fichier csv 
-
-    fichier = fopen("lignes_metro.csv", "r") ;
+    fichier = fopen("lignes_met.csv", "r") ;
     
     if (fichier == NULL)
     {
-        printf("Ouverture du fichier impossible");
+        printf("\n L'ouverture du fichier est impossible \n");
         exit(1);
     }
 
-    // on lit le fichier ligne par ligne
-    
-    while (fgets( ligne, NB_LIGNES, fichier) != NULL)
+    char* ptr_ligne = NULL;
+    size_t size = 0;
+    char* line = NULL;
+    Une_ligne* phead = head;
+    Une_ligne* pphead = head;
+
+    //on lit ligne par ligne ;
+    while(getline(&ptr_ligne, &size, fichier) != -1)
     {
-        // on appelle la fonction strtok et on initialise ptr_chaine 
-        ptr_chaine = strtok (ligne, separator);
+
+        pphead = head ;
+        line = NULL;
         
-        //code
-        strcpy(code,ptr_chaine);
+        //pour code ;
+        line = strtok(ptr_ligne, ";");
+        head->code = NULL;
+        head->code = (char*) malloc((strlen(line)+1)*sizeof(char));
+        
+        if (head->code == NULL)
+        {
+            printf("\n L'ouverture du fichier est impossible \n");
+            exit(1);
+        }
+        strcpy (head->code, line);
     
-        // vitesse
-        ptr_chaine = strtok (NULL, separator);
-        vitesse = atof(ptr_chaine);
+        //pour vitesse ;
+        line = strtok(NULL, ";");
+        head ->vitesse = (float) atof(line);
+        
+        //pour intervalle;
+        line = strtok(NULL, ";");
+        head ->intervalle = (float) atof(line);
+        
+        //pour color ;
+        line = strtok(NULL, ";");
+        head->color = NULL;
+        head->color = (char*) malloc((strlen(line)+1)*sizeof(char));
+           
+        if (head->color == NULL)
+        {
+            printf("\n L'ouverture du fichier est impossible \n");
+            exit(1);
+        }
+        strcpy (head->color, line);
+        
+        // pour passer sur le suivant; 
+        head->suiv = NULL;
+        head->suiv = (Une_ligne*) malloc (sizeof (Une_ligne));
+        
+        if (head -> suiv == NULL)
+        {
+            printf("\n L'ouverture du fichier est impossible \n");
+            exit(1);
+        }
+        head = head->suiv;
 
-        //intervalle 
-        ptr_chaine = strtok (NULL, separator); 
-        intervalle = atof(ptr_chaine); 
-
-        // couleur
-        ptr_chaine = strtok (NULL, separator); 
-        strcpy(couleur,ptr_chaine);
-
-        head = ajout(head,code,couleur,intervalle,vitesse);
     }
+    pphead->suiv = NULL;
+
 
     //fermeture du fichier
     fclose(fichier);
-
-    Une_ligne *phead = head;
-
+    afficher_lignes(phead);
     return phead;
 }
 
-//fonction pour chercher une ligne en fct de son code; 
+//fonction pour chercher une ligne en fct de son code;
 
 Une_ligne* chercher_ligne(Une_ligne* head, char* code)
 {
@@ -164,8 +186,8 @@ Une_ligne* chercher_ligne(Une_ligne* head, char* code)
 int main()
 {
     Une_ligne *ligne;
-    ligne = lire_ligne("../lignes_metro.csv");
-    afficher_lignes(ligne);
-    //detruire_lignes(ligne);
+    ligne = lire_ligne("../lignes_met.csv");
+    
     return 0;
 }
+
