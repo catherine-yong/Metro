@@ -190,11 +190,18 @@ Un_noeud *construire_aqr(Un_elem *head)
     Un_elem *phead = head;
     
     Un_noeud *aqr = NULL;
+    aqr = (Un_noeud *) malloc(sizeof(Un_noeud));
     Un_noeud *_aqr = NULL;
+    _aqr = (Un_noeud *) malloc(sizeof(Un_noeud));
+
+    Une_coord limite_no;
+    Une_coord limite_se;
+
+    limites_zone(head,limite_no,limite_se);
 
     while(phead)
     {
-        aqr = inserer_aqr(aqr,phead->truc->coord,phead->truc->coord,phead->truc);
+        aqr = inserer_aqr(aqr,limite_no,limite_se,phead->truc);
         phead = phead->suiv;
     }
 
@@ -300,7 +307,7 @@ Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
         
         if((ptr->no->limite_no.lon + ptr->no->limite_se.lon)/2 >= coord.lon)
         {
-            /* ici, le truc sera placé à la branche nord ouest */
+            /* ici, le truc est placé à la branche nord ouest */
             if(!ptr->no)
             {
                 /* si le noeud est vide, alors l'élément n'est pas là */
@@ -313,7 +320,7 @@ Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
 
         else
         {
-            /* ici, le truc sera placé à la branche sud ouest */
+            /* ici, le truc est placé à la branche sud ouest */
             if(!ptr->so)
             {
                 /* si le noeud est vide, alors l'élément n'est pas là */
@@ -327,10 +334,10 @@ Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
 
     else
     {
-        /* ici, le truc sera placé à l'est */
+        /* ici, le truc est placé à l'est */
         if((ptr->no->limite_no.lon + ptr->se->limite_se.lon)/2 >= coord.lon)
         {
-            /* ici, le truc sera placé à la branche nord est */
+            /* ici, le truc est placé à la branche nord est */
             if(!ptr->ne)
             {
                 /* si le noeud est vide, alors l'élément n'est pas là */
@@ -356,3 +363,8 @@ Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
     }
 }
 
+
+Un_elem *chercher_zone(Un_noeud *aqr, Un_elem *liste, Une_coord limite_no, Une_coord limite_se)
+{
+    
+}
