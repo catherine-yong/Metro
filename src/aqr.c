@@ -7,8 +7,10 @@
 
 Un_noeud *create_node_aqr(Une_coord limite_no, Une_coord limite_se, Un_truc *truc)
 {
+    // on crée un noeud au sein du quadtree en initialisant ses valeurs 
     Un_noeud *new_node_aqr = NULL;
 
+    new_node_aqr->truc = (Un_truc *) malloc(sizeof(Un_truc));
     new_node_aqr->truc = truc;
     new_node_aqr->limite_no = limite_no;
     new_node_aqr->limite_se = limite_se;
@@ -21,53 +23,30 @@ Un_noeud *create_node_aqr(Une_coord limite_no, Une_coord limite_se, Un_truc *tru
 
 }
 
-typedef struct _un_noeud { 
-    Un_truc *truc; //Une station ou une connexion 
-    Une_coord limite_no; // longitude min et latitude max
-    Une_coord limite_se; // longitude max et latitude min
-    struct _un_noeud *no; //Fils pour quart NO 
-    struct _un_noeud *so; //Fils pour quart SO 
-    struct _un_noeud *ne; //Fils pour quart NE 
-    struct _un_noeud *se; //Fils pour quart SE 
-} Un_noeud;
-
-typedef struct _une_coord { 
-    float lon;  /*Longitude decimale*/ 
-    float lat; /*Latitude decimale*/
-} Une_coord;
-
-
-typedef struct _un_truc { 
-    Une_coord coord;
-    Ttype type;
-    Tdata data;
-    float user_val; /*Distance pour plus court chemin*/
-} Un_truc;
-
 Un_noeud *inserer_aqr(Un_noeud *aqr, Une_coord limite_no, Une_coord limite_se, Un_truc *truc)
 {
+    /* on veut insérer un noeud au sein de l'aqr */
+
     /* on vérifie la comptabilité des coordonnes */
 
     if(limite_no.lat >= truc->coord.lat &&  limite_no.lon >= truc->coord.lon && limite_se.lat >= truc->coord.lat && limite_se.lon >= truc->coord.lon)
     {
     
-
         /* on crée un nouvel élément et on initialise ses valeurs */
-        Un_noeud *new_node = (Un_noeud *) malloc (sizeof(Un_noeud));
-        new_node->truc = truc;
-        new_node->no = NULL;
-        new_node->so = NULL;
-        new_node->ne = NULL;
-        new_node->se = NULL;
+        Un_noeud *new_node = NULL;
+        new_node = (Un_noeud *) malloc(sizeof(Un_noeud));
+        new_node = create_node_aqr(limite_no,limite_se,truc);
 
         Un_noeud *current = aqr;
 
         /* si le truc à insérer dans l'aqr est NULL on ne fait rien */
         if(!truc)
         {
+            printf("Il n'y a rien à ajouter\n");
             return NULL;
         }
 
+        /* si l'aqr est vide, alors l'aqr devient le nouveau noeud */
         if(!aqr)
         {
             aqr = (Un_noeud *)malloc(sizeof(Un_noeud));
@@ -78,8 +57,6 @@ Un_noeud *inserer_aqr(Un_noeud *aqr, Une_coord limite_no, Une_coord limite_se, U
         /* on a dépassé le seuil défini : le problème n'est plus pertinant à cette distance */
         if (abs(current->no->limite_no.lat - current->no->limite_se.lat) <= 0.5 && abs(current->no->limite_no.lon - current->no->limite_se.lon) <= 0.5) 
         {
-            /* changer les coordonnees du truc, truc->coord.lon et truc->coord.lat */
-            
             return NULL; 
         } 
 
@@ -187,10 +164,12 @@ Un_noeud *inserer_aqr(Un_noeud *aqr, Une_coord limite_no, Une_coord limite_se, U
 
 Un_noeud *construire_aqr(Un_elem *head)
 {
+    /* on construit un aqr depuis une liste */
     Un_elem *phead = head;
     
     Un_noeud *aqr = NULL;
     aqr = (Un_noeud *) malloc(sizeof(Un_noeud));
+    
     Un_noeud *_aqr = NULL;
     _aqr = (Un_noeud *) malloc(sizeof(Un_noeud));
 
@@ -205,7 +184,7 @@ Un_noeud *construire_aqr(Un_elem *head)
         phead = phead->suiv;
     }
 
-    _aqr = aqr;
+    _aqr = aqr; // _aqr pointe vers la tete de aqr 
 
     return _aqr;
 }
@@ -223,6 +202,7 @@ void detruire_aqr(Un_noeud *abr)
 
 void detruire_branches_aqr(Un_noeud *abr, Un_noeud *branch)
 {
+    /* on utilise une autre fonction */
     if(abr->no)
     {
         detruire_branches_aqr(abr,abr->no);
@@ -248,7 +228,7 @@ void detruire_branches_aqr(Un_noeud *abr, Un_noeud *branch)
 
 void detruire_noeud_aqr(Un_noeud *node)
 {
-
+    /* on detruir le noeud */
     if(!node)
     {
         return;
@@ -294,8 +274,6 @@ Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
     /* on a dépassé le seuil défini : le problème n'est plus pertinant à cette distance */
     if (abs(ptr->no->limite_no.lat - ptr->no->limite_se.lat) <= 0.5 && abs(ptr->no->limite_no.lon - ptr->no->limite_se.lon) <= 0.5) 
     {
-        /* changer les coordonnees du truc, truc->coord.lon et truc->coord.lat */
-        
         return NULL; 
     } 
 
@@ -366,5 +344,5 @@ Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
 
 Un_elem *chercher_zone(Un_noeud *aqr, Un_elem *liste, Une_coord limite_no, Une_coord limite_se)
 {
-    
+
 }
