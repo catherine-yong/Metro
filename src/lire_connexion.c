@@ -90,6 +90,17 @@ Un_elem* lire_connexions(Une_ligne *liste_ligne, Un_nabr * abr_sta)
             exit(1);
         }
         strcpy (pphead ->code, line);
+        //pour passer au suivant ;
+        pphead-> suiv = NULL;
+        pphead-> suiv= (Une_ligne*) malloc (sizeof (Une_ligne));
+        
+         if (pphead -> suiv == NULL)
+         {
+             printf("\n L'ouverture du fichier est impossible \n");
+             exit(1);
+         }
+         
+         pphead = pphead->suiv = NULL;
         
         
     // pour passer au suivant;
