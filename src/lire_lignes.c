@@ -165,3 +165,25 @@ Une_ligne *lire_ligne(char *nom_fichier)
     afficher_lignes(phead);
     return phead;
 }
+
+//fonction pour chercher une ligne en fct de son code;
+
+Une_ligne* chercher_ligne(Une_ligne* head, char* code)
+{
+    char* c = head->code; // il faut initialiser c
+    while (strcmp(c, code) && head != NULL)
+    {
+        head = head -> suiv;
+    }
+    
+    if (!head)
+    {
+        printf("La ligne n'est pas présente\n");
+        return NULL;
+    }
+    else
+    {
+        printf("La ligne est bien présente\n");
+        return head;
+    }
+}
