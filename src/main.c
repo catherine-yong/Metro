@@ -4,6 +4,11 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include "liste.h"
+#include "truc.h"
+#include "coord.h"
+#include "station.h"
+#include "arbr_type.h"
+#include "aqrtopo.h"
 
 int main()
 {
