@@ -15,7 +15,7 @@ void afficher_lignes(Une_ligne *head)
 
     while (head)
     {
-        printf("\n code :%s", head->code);
+        printf("code :%s", head->code);
         printf("\n vitesse : %.2f", head->vitesse);
         printf("\n intervalle : %.2f", head->intervalle);
         printf("\n couleur : %s \n\n", head->color);
@@ -166,24 +166,34 @@ Une_ligne *lire_ligne(char *nom_fichier)
     return phead;
 }
 
-//fonction pour chercher une ligne en fct de son code;
-
-Une_ligne* chercher_ligne(Une_ligne* head, char* code)
+Une_ligne* chercher_ligne(Une_ligne *head, char *code)
 {
-    char* c = head->code; // il faut initialiser c
-    while (strcmp(c, code) && head != NULL)
-    {
-        head = head -> suiv;
-    }
+    Une_ligne *phead = head;
     
-    if (!head)
+    while ((strcmp(phead->code, code) != 0) && phead->suiv != NULL)
     {
-        printf("La ligne n'est pas présente\n");
-        return NULL;
+        phead = phead -> suiv;
     }
-    else
+
+    if(strcmp(phead->code , code) == 0)
     {
         printf("La ligne est bien présente\n");
         return head;
     }
+
+    else
+    {
+    printf("La ligne n'est pas présente\n");
+    return NULL;
+    }
+    
+}
+
+int main()
+{
+    Une_ligne *ligne;
+    ligne = lire_ligne("../lignes_metro");
+    char *numero_metro = "M1";
+    chercher_ligne(ligne,numero_metro);
+    return 0;
 }
