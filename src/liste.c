@@ -1,46 +1,157 @@
-#include "liste.h"
-#include "station.h"
-#include "truc.h"
+#include "abr.h"
 
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <float.h>
 
 Un_elem *lire_stations(char *nom_fichier)
 {
-    FILE* fd;
-    char ligne[200];
-    char *ptr_chaine;/* pointeur pour récuperer le "token"*/
-    const char *separators = ";";
+    FILE *fichier;
+    char *line = NULL;
+    char *ptr_ligne;
+    const char *separator = ";";
+    size_t size = 0;
+    
+    Un_elem *head = NULL;
+    head = (Un_elem*) malloc(sizeof(Un_elem));
+    Un_elem *phead = head;
+    Un_elem *pptemp = head;
+    head->truc = NULL;
+    head->truc = (Un_truc*) malloc(sizeof(Un_truc));
 
-    fd = fopen(nom_fichier, "r");
-    if (fd == NULL)
+    fichier = fopen(nom_fichier,"r");
+
+    if(!fichier)
+    {
+        printf("impossible d'ouvir le fichier\n");
         return NULL;
-    while (fgets(ligne, 200, fd) != NULL) {
-        ptr_chaine = strtok(ligne, separators);
-        while (ptr_chaine != NULL) {
-            printf("%s\n", ptr_chaine);
-            ptr_chaine = strtok(NULL, separators);
-        }
     }
-    return ptr_chaine;
+
+    if(!head)
+    {
+        fclose(fichier);
+        return NULL;
+    }
+
+    if(!head->truc)
+    {
+        fclose(fichier);
+        return NULL;
+    }
+
+    // initialisation des valeurs
+    head->truc->type = 0;
+    head->truc->user_val = 0;
+    ((head->truc->data).sta).nb_con = 0;
+    ((head->truc->data).sta).tab_con = NULL;
+    ((head->truc->data).sta).nom = NULL;
+    ((head->truc->data).sta).con_pcc = NULL;
+
+    while (getline(&line, &size, fichier) != -1){
+
+        pptemp = head;
+
+        ptr_ligne = NULL;
+
+        ptr_ligne = strtok(line,separator);
+
+        ((head->truc->data).sta).nom = NULL;
+        ((head->truc->data).sta).nom = (char*) malloc((strlen(ptr_ligne) + 1)*sizeof(char));
+
+        if(((head->truc->data).sta).nom == NULL)
+        {
+            fclose(fichier);
+            return NULL;
+        }
+
+        strcpy(((head->truc->data).sta).nom , ptr_ligne);
+
+        ptr_ligne = strtok(NULL,separator);
+
+        (head->truc->coord).lat = (float) atof(ptr_ligne);
+
+        ptr_ligne = strtok(NULL,separator);
+
+        (head->truc->coord).lon = (float) atof(ptr_ligne);
+
+        head->suiv = NULL;
+        head->suiv = (Un_elem*) malloc(sizeof(Un_elem));
+        if(!head->suiv)
+        {
+            fclose(fichier);
+            return NULL;
+        }
+
+        head->suiv->truc = NULL;
+        head->suiv->truc = (Un_truc*) malloc(sizeof(Un_truc));
+        if(head->suiv->truc == NULL)
+        {
+            fclose(fichier);
+            return NULL;
+        }
+
+        head = head->suiv;
+        head->truc->type = 0;
+        head->truc->user_val = 0.0;
+        ((head->truc->data).sta).nb_con = 0;
+        ((head->truc->data).sta).tab_con = NULL;
+        ((head->truc->data).sta).nom = NULL;
+        ((head->truc->data).sta).con_pcc = NULL;
+    }
+
+    //desallocation memoire
+    free(line);
+    free(head->truc);
+    free(head);
+    phead->suiv = NULL;
+    fclose(fichier);
+    return phead;
 }
 
 Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
 {
     /* on veut inserer le truc dans la liste de maniere croissante*/
 
+    if(!truc)
+    {
+        printf("rien à insérer\n");
+        return head;
+    }
+
     Un_elem *current = head;
 
-    Un_elem *element;
-    element->truc = truc;
+    Un_elem *nouv_element = NULL;
+    nouv_element = (Un_elem *) malloc(sizeof(Un_elem));
+    if(!nouv_element)
+    {
+        printf("probleme allocation\n");
+        return NULL;
+    }
+    nouv_element->truc = NULL;
+    nouv_element->truc = (Un_truc *) malloc(sizeof(Un_truc));
+
+    if(!nouv_element->truc)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }
+
+    nouv_element->truc = truc;
 
     /* si la liste est nulle ou si l'element a inserer a un user_val plus grand que la tete de liste, on ajoute au debut*/
 
-    if((!head) || (truc->user_val > head->truc->user_val))
+    if(!head)
     {
-        element->suiv = head;
-        head = element;
+        head = (Un_elem *) malloc(sizeof(Un_elem));
+        head->truc = nouv_element->truc;
+        head->suiv = NULL;
+    }
+
+    if(truc->user_val > head->truc->user_val)
+    {
+        nouv_element->suiv = head;
+        head = nouv_element;
     }
     
     /* si l'element a inserer est au milieu de la liste ou a la fin, alors on parcourt jusqu'au bon rand de user_valur 
@@ -52,8 +163,8 @@ Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
         {
             current = current->suiv;
         } 
-        element->suiv = current->suiv;
-        current->suiv = element;
+        nouv_element->suiv = current->suiv;
+        current->suiv = nouv_element;
     }
     return head;
 }
@@ -128,14 +239,14 @@ Un_elem *inserer_deb_liste(Un_elem *head, Un_truc *truc)
 
 void limites_zone(Un_elem *head, Une_coord *limite_no, Une_coord *limite_se)
 {
-    Un_elem *phead = head;
+    Un_elem *phead = head->suiv;
 
     /* on intialise les valeurs des 2 coordonnées aux valeurs maximales de leur type */
 
-    double longitude_min = DBL_MAX;
-    double longitude_max = DBL_MIN;
-    double latitude_min = DBL_MAX;
-    double latitude_max = DBL_MIN;
+    double longitude_min = head->truc->coord.lon;
+    double longitude_max = head->truc->coord.lon;
+    double latitude_min = head->truc->coord.lat;
+    double latitude_max = head->truc->coord.lat;
 
     /*tant que le pointeur sur liste n'est pas null, on compare avec les composantes des 2 coordonnées */
     /* si on trouve un élément plus petit (resp. grand) que le minimum définit (resp. maximum) alors on procède à un échange */
@@ -183,10 +294,28 @@ void limites_zone(Un_elem *head, Une_coord *limite_no, Une_coord *limite_se)
         limite_no = (Une_coord *) malloc(sizeof(Une_coord));
     }
 
+    if((!limite_se) || (!limite_no))
+    {
+        exit(1);
+    }
+
     limite_se->lon = longitude_max;
     limite_se->lat = latitude_min;
 
     limite_no->lon = longitude_min;
     limite_se->lat = latitude_max;
 
+}
+
+int main()
+{
+    Un_truc *truc;
+    Une_coord coord;
+    Ttype type;
+    Tdata data;
+    double uv;
+    truc = creer_truc(coord, type, data, uv);
+    Un_elem *stations;
+    stations = lire_stations("stations_metro.csv");
+    return 0;
 }
