@@ -168,14 +168,13 @@ Une_ligne *lire_ligne(char *nom_fichier)
 
 Une_ligne* chercher_ligne(Une_ligne *head, char *code)
 {
-    Une_ligne *phead = head;
-    
-    while ((strcmp(phead->code, code) != 0) && phead->suiv != NULL)
+ 
+    while ((strcmp(head->code, code) != 0) && head->suiv != NULL)
     {
-        phead = phead -> suiv;
+        head = head -> suiv;
     }
 
-    if(strcmp(phead->code , code) == 0)
+    if(strcmp(head->code , code) == 0)
     {
         printf("La ligne est bien présente\n");
         return head;
@@ -193,7 +192,7 @@ int main()
 {
     Une_ligne *ligne;
     ligne = lire_ligne("../lignes_metro");
-    char *numero_metro = "M1";
+    char *numero_metro = "M9";
     chercher_ligne(ligne,numero_metro);
     return 0;
 }
