@@ -1,10 +1,13 @@
 //prototype des fonctions
+#ifndef OK 
+#define OK 1
+
+#include <stdio.h>
 
 #include "truc.h"
 #include "coord.h"
 #include "arbr_type.h"
 #include "connexion.h"
-#include "coord.h"
 #include "ligne.h"
 #include "liste.h"
 #include "station.h"
@@ -35,13 +38,15 @@ void detruire_branches_aqr(Un_noeud *abr, Un_noeud *branch);
 void detruire_noeud_aqr(Un_noeud *node);
 Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord);
 Un_elem *chercher_zone(Un_noeud *aqr, Un_elem *liste, Une_coord limite_no, Une_coord limite_se);
-Un_elem* lire_connexions(char* nom_fichier, Une_ligne* liste_ligne, Un_nabr* arb_sta);
+
 void afficher_lignes(Une_ligne *head);
 void detruire_lignes(Une_ligne* head);
 Une_ligne *lire_ligne(char *nom_fichier);
 
+void affiche_abr(Un_nabr *abr);
 
 
+#endif
 
 
 

@@ -1,6 +1,9 @@
+#ifndef TRUC
+#define TRUC 1
+
 #include "station.h"
-#include "connexion.h"
 #include "coord.h"
+#include "connexion.h"
 
 typedef enum _ttype {STA, CON} Ttype; 
 
@@ -15,3 +18,5 @@ typedef struct _un_truc {
     Tdata data;
     float user_val; /*Distance pour plus court chemin*/
 } Un_truc;
+
+#endif

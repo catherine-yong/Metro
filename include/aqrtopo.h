@@ -1,3 +1,9 @@
+#ifndef NOEUD 
+#define NOEUD 1
+
+#include "truc.h"
+#include "coord.h"
+
 typedef struct _un_noeud { 
     Un_truc *truc; //Une station ou une connexion 
     Une_coord limite_no; //Limite zone
@@ -7,3 +13,5 @@ typedef struct _un_noeud {
     struct _un_noeud *ne; //Fils pour quart NE 
     struct _un_noeud *se; //Fils pour quart SE 
 } Un_noeud;
+
+#endif
