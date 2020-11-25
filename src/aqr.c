@@ -1,6 +1,4 @@
-#include "aqrtopo.h"
-#include "coord.h"
-#include "truc.h"
+#include "abr.h"
 
 #include <stdlib.h>
 #include <liste.h>
@@ -176,7 +174,7 @@ Un_noeud *construire_aqr(Un_elem *head)
     Une_coord limite_no;
     Une_coord limite_se;
 
-    limites_zone(head,limite_no,limite_se);
+    limites_zone(head,&limite_no,&limite_se);
 
     while(phead)
     {
@@ -188,6 +186,7 @@ Un_noeud *construire_aqr(Un_elem *head)
 
     return _aqr;
 }
+
 void detruire_aqr(Un_noeud *abr)
 {
     /* on crée une fonction recursive qui utilise d'autres fonctions intermédiaires */
@@ -342,7 +341,56 @@ Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
 }
 
 
-Un_elem *chercher_zone(Un_noeud *aqr, Un_elem *liste, Une_coord limite_no, Une_coord limite_se)
+
+/*limite_no correspond à la longitude minimale et la latitude maximale, limite_se
+correspond à la longitude maximale et à la latitude minimale.*/
+
+Un_elem *chercher_zone(Un_noeud *aqr, Un_elem *head, Une_coord limite_no, Une_coord limite_se)
 {
+    // dans ces cas là, on passe au noeud suivant
+    if((aqr->limite_no.lon < limite_no.lon) || (aqr->limite_no.lat > limite_no.lat) || (aqr->limite_se.lon > limite_se.lon) || (aqr->limite_se.lat < limite_no.lat))
+    {
+        chercher_zone(aqr->no,head,limite_no,limite_se);
+        chercher_zone(aqr->so,head,limite_no,limite_se);
+        chercher_zone(aqr->ne,head,limite_no,limite_se);
+        chercher_zone(aqr->se,head,limite_no,limite_se);
+    }
+
+    // si c'est dans la zone, on ajoute à la liste le truc de l'aqr courant
+    head->truc = NULL;
+    head->truc = (Un_truc *) malloc(sizeof(Un_truc));
+    head->truc = aqr->truc;
+
+    // on passe au suivant
+    head->suiv = NULL;
+    head->suiv = (Un_elem *) malloc(sizeof(Un_elem));
+    head = head->suiv;
+
+    if(aqr->no)
+    {
+        chercher_zone(aqr->no,head,limite_no,limite_se);
+    }
+
+    if(aqr->so)
+    {
+        chercher_zone(aqr->so,head,limite_no,limite_se);
+    }
+
+    if(aqr->ne)
+    {
+        chercher_zone(aqr->ne,head,limite_no,limite_se);
+    }
+
+    if(aqr->se)
+    {
+        chercher_zone(aqr->se,head,limite_no,limite_se);
+    }
+
+    // si c'est une feuille on arrête
+    if((!aqr->no) || (!aqr->ne) || (!aqr->so) || (!aqr->se))
+    {
+        return head;
+    }
+    
 
 }
