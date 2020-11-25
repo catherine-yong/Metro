@@ -54,7 +54,7 @@ Une_ligne *lire_ligne(char *nom_fichier)
 
     //on ouvre le fichier csv
 
-    fichier = fopen("lignes_metro.csv", "r") ;
+    fichier = fopen(nom_fichier, "r") ;
     
     // on teste si on peut bien ouvrir le fichier
 
@@ -79,7 +79,7 @@ Une_ligne *lire_ligne(char *nom_fichier)
         d'où l'utilisation de atof */
 
 
-    while(getline(&ptr_ligne, &size, fichier) != -1)
+    while(getline(&ptr_ligne, &size, fichier) >= 0)
     {
         pphead = head ;
         
@@ -191,7 +191,7 @@ Une_ligne* chercher_ligne(Une_ligne *head, char *code)
 int main()
 {
     Une_ligne *ligne;
-    ligne = lire_ligne("../lignes_metro");
+    ligne = lire_ligne("../lignes_metro.csv");
     char *numero_metro = "M9";
     chercher_ligne(ligne,numero_metro);
     return 0;
