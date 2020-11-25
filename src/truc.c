@@ -16,6 +16,7 @@ Un_truc *creer_truc(Une_coord coord, Ttype type, Tdata data, double uv)
 void detruire_truc(Un_truc *truc)
 {
      /* si c'est une station alors on désalloue le pointeur */
+    /*on désalloue la mémoire de tous les champs de truc */
 
     if (truc->type == 0) 
     {
