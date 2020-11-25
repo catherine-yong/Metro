@@ -16,7 +16,7 @@ Lire_Station : lire_station.c liste.h my.h
 ABR : abr.c arbr_type.h aqrtopo.h liste.h truc.h station.h
 	$(COMPILE) abr.c
 
-Liste_Ligne : liste_ligne.c ligne.h
+Lire_Ligne : lire_ligne.c ligne.h
 	$(COMPILE) liste_ligne.c
 
 Connexions : connexions.c liste.h lignes.h abr.h
