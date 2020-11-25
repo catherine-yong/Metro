@@ -20,20 +20,23 @@ Un_elem *lire_stations(char *nom_fichier)
     head->truc = NULL;
     head->truc = (Un_truc*) malloc(sizeof(Un_truc));
 
-    fichier = fopen(nom_fichier,"r");
+    fichier = fopen(nom_fichier,"r");/*ouverture du fichier*/
 
+    /*on vérifie que le fichier n'est pas vide*/
     if(!fichier)
     {
         printf("impossible d'ouvir le fichier\n");
         return NULL;
     }
 
+    /*on vérifie que head n'est pas nul*/
     if(!head)
     {
         fclose(fichier);
         return NULL;
     }
 
+    /*on vérifie que head pointant vers son champs truc n'est pas nul*/
     if(!head->truc)
     {
         fclose(fichier);
@@ -48,13 +51,14 @@ Un_elem *lire_stations(char *nom_fichier)
     ((head->truc->data).sta).nom = NULL;
     ((head->truc->data).sta).con_pcc = NULL;
 
-    while (getline(&line, &size, fichier) != -1){
+    while (getline(&line, &size, fichier) != -1)/*on va procéder à la lecture du fichier ligne par ligne, tant que la fonction est différente de -1 (la fct renvoie -1 en cas d'échec de lecture)*/
+    {
 
         pptemp = head;
 
         ptr_ligne = NULL;
 
-        ptr_ligne = strtok(line,separator);
+        ptr_ligne = strtok(line,separator);/*qui va extraire tous les éléments de la ligne,un à un, entre le séparateur*/
 
         ((head->truc->data).sta).nom = NULL;
         ((head->truc->data).sta).nom = (char*) malloc((strlen(ptr_ligne) + 1)*sizeof(char));
@@ -65,7 +69,7 @@ Un_elem *lire_stations(char *nom_fichier)
             return NULL;
         }
 
-        strcpy(((head->truc->data).sta).nom , ptr_ligne);
+        strcpy(((head->truc->data).sta).nom , ptr_ligne);/*qui va copier le contenu de head->truc->data.sta.nom dans ptr_ligne*/
 
         ptr_ligne = strtok(NULL,separator);
 
@@ -100,7 +104,7 @@ Un_elem *lire_stations(char *nom_fichier)
         ((head->truc->data).sta).con_pcc = NULL;
     }
 
-    //desallocation memoire
+    //désallocation memoire
     free(line);
     free(head->truc);
     free(head);
@@ -111,8 +115,8 @@ Un_elem *lire_stations(char *nom_fichier)
 
 Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
 {
-    /* on veut inserer le truc dans la liste de maniere croissante*/
-
+    /* on veut inserer le truc dans la liste de manière croissante*/
+    /*on vérifie que truc n'est pas nul*/
     if(!truc)
     {
         printf("rien à insérer\n");
@@ -139,7 +143,7 @@ Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
 
     nouv_element->truc = truc;
 
-    /* si la liste est nulle ou si l'element a inserer a un user_val plus grand que la tete de liste, on ajoute au debut*/
+    /* si la liste est nulle ou si l'element a inserer a un user_val plus grand que la tete de liste, on ajoute au début*/
 
     if(!head)
     {
