@@ -9,85 +9,79 @@
 #include "abr.h"
 #include "aqrtopo.h"
 
-int main()
+int main(void)
 {
-    Une_ligne* liste_ligne;
-    printf("\n Voici la liste des lignes de métro : \n\n");
-    liste_ligne = lire_ligne("../lignes_metro.csv");
+    // Exercice 1 : 
+    Un_elem* stations; 
+    stations = lire_station("station_metro.csv")
+    
+    // question 4 : 
+    Une_coord *limite_no = (Une_coord*)malloc(sizeof(Une_coord);
+    limite_no->lon = 2000; 
+    limite_no->lat = -1000;                                           
+    Une_coord *limite_se = (Une_coord*)malloc(sizeof(Une_coord);
+    limite_no->lon = -2000; 
+    limite_no->lat = 1000;
+    limites_zone(stations, limite_no, limite_se);                                           
 
-    Un_truc *truc;
-    Une_coord coord;
-    Ttype type;
-    Tdata data;
-    double uv;
-    truc = creer_truc(coord, type, data, uv);
-    //detruire_truc(truc);
-    
-    Un_elem* liste = NULL;    
-    liste = inserer_liste_trie(liste, truc);
-    FILE* fichier;
-    fichier = fopen ("../station_metro.csv", "r");
-    ecrire_liste(fichier, liste);
-    //detruire_liste(liste);
-    //detruire_liste_et_truc(liste);
-    
-    Un_elem *stations;
-    stations = lire_stations("../stations_metro.csv");
-    /*
-    Une_coord *limite_no;
-    Une_coord *limite_se;
-    limites_zone(liste, limite_no, limite_se);*/
-    
-
-    // Excercice 2 :
-   /* Un_nabr* noeud;
-    noeud = creer_nabr(truc);
-    
-    Un_nabr* abr;
-    Un_nabr* node;
-    abr = inserer_abr(abr, node);
-    
-    Un_elem* liste_sta;
-    liste_sta = construire_abr(liste_sta);
-    detruire_abr(abr);
-    
-    char* nom;
-    printf("\n Saisir le nom de la station souhaité : \n");
-    gets(nom);
-    checher_station(abr, nom);
-
-
-    // Exercice 3 :
-    Une_ligne* liste_ligne;
-    printf("\n Voici la liste des lignes de métro : \n");
-    liste_ligne = lire_ligne("../ligne_metro.csv");
-    detruire_lignes(liste_ligne);
-    char* code;
-    
-    printf("\n Saisir le code de la ligne souhaité :\n");
-    gets(code);
-    chercher_ligne(liste_ligne, code);*/
-    /*
+    // Exercice 2 :
+    Un_nabr* arbre = (Un_nabr*)malloc(sizeof(Un_nabr);
+    arbre = construire_abr(stations);
+                                                                 
+    // Exercice 3 :                                 
+    Une_ligne* liste_ligne; 
+    liste_ligne = lire_ligne("../lignes_metro.csv");                                  
+                                      
     // Exercice 4 :
-    Un_elem* new_liste;
-    new_liste = inserer_deb_liste(liste, truc);
-    printf("\n Voici la liste des connexions de métro : \n");
-    //lire_connexion = (liste_ligne, abr_sta);
-    
-    
-    //Exercice 5 :
-    Un_noeud* aqr;
-    Une_coord *limite_no = NULL;
-    Une_coord *limite_se = NULL;
-    aqr = inserer_aqr(aqr, *limite_no, *limite_se, truc);
-    aqr = construire_aqr(liste_sta);
-    detruire_aqr(aqr);
+    Un_elem* connexions; 
+    connexions = lire_connexion("connexions.csv")
+    int compt = 0; //initialisation du compteur à 0                                  
+    Un_elem* head = stations; 
+    while (!head)
+      {   
+          char* nom = head->truc>data.sta.nom; 
+          Un_truc* new = checher_station(arbre, nom);
+          head->truc= new; 
+          head = head->suiv; 
+          compt++; 
+      }
+                                                                       
+    // Exercice 6 : 
+    int c; 
+    char* sta_dep; 
+    sta_dep = (char*)malloc(sizeof(char));  
+    printf("\n Veuillez entrer votre station de départ :\n");   
+    gets(sta_dep); 
+    while((c = getchar()) != '\n' && c != EOF) 
+    Un_truc* truc_sta_dep = chercher_station(arbre, sta_dep);
+                                                                   
+    char* sta_arr; 
+    sta_arr = (char*)malloc(sizeof(char));  
+    printf("\n Veuillez entrer votre station d'arrivée :\n");   
+    gets(sta_arr); 
+    while((c = getchar()) != '\n' && c != EOF) 
+    Un_truc* truc_sta_arr = chercher_station(arbre, sta_arr);      
 
-    Une_coord* coord;
-    printf("\n Saisir la valeur de la coordonnée souhaitée : \n");
-    scanf("%f", coord);
-    chercher_aqr(aqr, coord);*/
-    
+    int chemin_voulu; 
+    printf("Veuillez entrer si vous préférez le choix le plus court (1) ou le plus rapide (0) :\n");                                 
+    scanf("%d", &d); 
+                                      
+    printf("\n Le trajet pour aller de %s à %s est :\n", sta_dep, sta_arr);
+    dijkstra(stations,truc_sta_dep,connexions,chemin_voulu); 
+    Un_elem* chemin = cherche_chemin(truc_sta_arr);
+    ecrire_chemin(chemin, connexions, chemin_voulu); 
+                                      
+    // Désallocation de la mémoire : 
+    free(limite_no); 
+    free(limite_se);                                  
+    free(sta_dep); 
+    free(sta_arr); 
+    detruire_liste_et_truc(connexions);
+    detruire_lignes(liste_ligne); 
+    detruire_truc(truc_sta_dep);                                  
+    detruire_truc(truc_sta_arr); 
+    detruire_abr(arbre);                                 
+                                      
    return 0;
     
 }
