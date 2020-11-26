@@ -2,7 +2,11 @@ CC = gcc
 CCFLAGS = -Wall 
 COMPILE = $(CC) $(CCFLAGS)  -o $@
 
+% ajouter définitions de PROGRAMS
+
 all: $(PROGRAMS)
+
+Main : main.c truc.c liste.c lire_station.c abr.c lire_ligne.c dijkstra.c truc.h coord.h liste.h station.h aqrtopo.h (? à revoir le nom) 
 
 Truc : truc.c truc.h coord.h
 	$(COMPILE) truc.c
@@ -10,7 +14,7 @@ Truc : truc.c truc.h coord.h
 Liste : liste.c liste.h station.h truc.h
 	$(COMPILE) liste.c
 
-Lire_Station : lire_station.c liste.h my.h
+Lire_Station : lire_station.c liste.h
 	$(COMPILE) lire_station.c
 
 ABR : abr.c arbr_type.h aqrtopo.h liste.h truc.h station.h
