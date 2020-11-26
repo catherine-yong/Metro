@@ -1,8 +1,7 @@
 CC = gcc
 CCFLAGS = -Wall 
 COMPILE = $(CC) $(CCFLAGS)  -o $@
-
-% ajouter définitions de PROGRAMS
+PROGRAMS = Main 
 
 all: $(PROGRAMS)
 
