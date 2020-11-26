@@ -4,7 +4,7 @@
 
 #define NB_LIGNES 100
 
-#include "ligne.h"
+#include "header/ligne.h"
 
 //fonction pour afficher la liste;
 
@@ -51,6 +51,11 @@ Une_ligne *lire_ligne(char *nom_fichier)
 
     FILE* fichier ;
     Une_ligne *head = (Une_ligne*) malloc (sizeof(Une_ligne));
+    if(!head)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }
 
     //on ouvre le fichier csv
 
@@ -79,7 +84,7 @@ Une_ligne *lire_ligne(char *nom_fichier)
         d'où l'utilisation de atof */
 
 
-    while(getline(&ptr_ligne, &size, fichier) >= 0)
+    while(getline(&ptr_ligne, &size, fichier) != -1)
     {
         pphead = head ;
         
@@ -176,23 +181,23 @@ Une_ligne* chercher_ligne(Une_ligne *head, char *code)
 
     if(strcmp(head->code , code) == 0)
     {
-        printf("La ligne est bien présente\n");
+        //printf("La ligne est bien présente\n");
         return head;
     }
 
     else
     {
-    printf("La ligne n'est pas présente\n");
+    //printf("La ligne n'est pas présente\n");
     return NULL;
     }
     
 }
 
-int main()
+/*int main()
 {
     Une_ligne *ligne;
-    ligne = lire_ligne("../lignes_metro.csv");
+    ligne = lire_ligne("lignes_metro.csv");
     char *numero_metro = "M9";
     chercher_ligne(ligne,numero_metro);
     return 0;
-}
+}*/

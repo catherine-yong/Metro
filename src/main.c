@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "truc.h"
-#include "coord.h"
-#include "liste.h"
-#include "station.h"
-#include "abr.h"
-#include "aqrtopo.h"
+#include "header/truc.h"
+#include "header/coord.h"
+#include "header/liste.h"
+#include "header/station.h"
+#include "header/abr.h"
+#include "header/aqrtopo.h"
 
 int main(void)
 {
@@ -36,14 +36,28 @@ int main(void)
     //Exercice 2 :
     Un_nabr* abr_sta = (Un_nabr*)malloc(sizeof(Un_nabr));
     abr_sta = construire_abr(stations);
+    affiche_abr(abr_sta);
                                                                  
     // Exercice 3 :                                 
     Une_ligne* liste_ligne; 
-    liste_ligne = lire_ligne("csv/lignes_metro.csv");                                  
-                                      
+    liste_ligne = lire_ligne("csv/lignes_metro.csv"); 
+
+    if(!abr_sta)
+    {
+        printf("pas d'abr\n");
+        return 1;
+    }                       
+
+    if(!liste_ligne)
+    {
+        printf("pas de liste\n");
+        return 1;
+    }          
+          
     // Exercice 4 :
-    Un_elem* connexions; 
-    connexions = lire_connexions("csv/connexions.csv",liste_ligne , abr_sta);
+    Un_elem* connex;
+    char *nom_fichier = "csv/connexions.csv";
+    connex = lire_connexions(nom_fichier,liste_ligne,abr_sta);
     // int compt = 0; //initialisation du compteur à 0                                  
     // Un_elem* head = stations; 
     // while (!head)

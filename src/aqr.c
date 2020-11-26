@@ -1,4 +1,4 @@
-#include "abr.h"
+#include "header/abr.h"
 
 #include <stdlib.h>
 #include <liste.h>
@@ -7,8 +7,18 @@ Un_noeud *create_node_aqr(Une_coord limite_no, Une_coord limite_se, Un_truc *tru
 {
     // on crée un noeud au sein du quadtree en initialisant ses valeurs 
     Un_noeud *new_node_aqr = NULL;
-
+    new_node_aqr = (Un_noeud *) malloc(sizeof(Un_noeud));
+    if(!new_node_aqr)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }
     new_node_aqr->truc = (Un_truc *) malloc(sizeof(Un_truc));
+    if(!new_node_aqr->truc)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }  
     new_node_aqr->truc = truc;
     new_node_aqr->limite_no = limite_no;
     new_node_aqr->limite_se = limite_se;
@@ -33,6 +43,11 @@ Un_noeud *inserer_aqr(Un_noeud *aqr, Une_coord limite_no, Une_coord limite_se, U
         /* on crée un nouvel élément et on initialise ses valeurs */
         Un_noeud *new_node = NULL;
         new_node = (Un_noeud *) malloc(sizeof(Un_noeud));
+        if(!new_node)
+        {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+        }
         new_node = create_node_aqr(limite_no,limite_se,truc);
 
         Un_noeud *current = aqr;
@@ -48,6 +63,11 @@ Un_noeud *inserer_aqr(Un_noeud *aqr, Une_coord limite_no, Une_coord limite_se, U
         if(!aqr)
         {
             aqr = (Un_noeud *)malloc(sizeof(Un_noeud));
+            if(!aqr)
+            {
+            printf("probleme allocation mémoire\n");
+            return NULL;
+            }
             aqr = new_node;
             return aqr;
         }
@@ -167,9 +187,19 @@ Un_noeud *construire_aqr(Un_elem *head)
     
     Un_noeud *aqr = NULL;
     aqr = (Un_noeud *) malloc(sizeof(Un_noeud));
+    if(!aqr)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }
     
     Un_noeud *_aqr = NULL;
     _aqr = (Un_noeud *) malloc(sizeof(Un_noeud));
+    if(!_aqr)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }
 
     Une_coord limite_no;
     Une_coord limite_se;
@@ -185,44 +215,6 @@ Un_noeud *construire_aqr(Un_elem *head)
     _aqr = aqr; // _aqr pointe vers la tete de aqr 
 
     return _aqr;
-}
-
-void detruire_aqr(Un_noeud *abr)
-{
-    /* on crée une fonction recursive qui utilise d'autres fonctions intermédiaires */
-    if(abr != NULL)
-    {
-        detruire_branches(abr,abr->no);
-        detruire_branches(abr,abr->ne);
-        detruire_branches(abr,abr->so);
-        detruire_branches(abr,abr->se);
-    }
-}
-
-void detruire_branches_aqr(Un_noeud *abr, Un_noeud *branch)
-{
-    /* on utilise une autre fonction */
-    if(abr->no)
-    {
-        detruire_branches_aqr(abr,abr->no);
-    }
-
-    if(abr->ne)
-    {
-        detruire_branches_aqr(abr,abr->ne);
-    }
-
-    if(abr->so)
-    {
-        detruire_branches_aqr(abr,abr->so);
-    }
-
-    if(abr->se)
-    {
-        detruire_branches_aqr(abr,abr->se);
-    }
-
-    detruire_noeud_aqr(branch);
 }
 
 void detruire_noeud_aqr(Un_noeud *node)
@@ -255,6 +247,45 @@ void detruire_noeud_aqr(Un_noeud *node)
 
     free(node);
     node = NULL;
+}
+
+void detruire_branches_aqr(Un_noeud *abr, Un_noeud *branch)
+{
+    /* on utilise une autre fonction */
+    if(abr->no)
+    {
+        detruire_branches_aqr(abr,abr->no);
+    }
+
+    if(abr->ne)
+    {
+        detruire_branches_aqr(abr,abr->ne);
+    }
+
+    if(abr->so)
+    {
+        detruire_branches_aqr(abr,abr->so);
+    }
+
+    if(abr->se)
+    {
+        detruire_branches_aqr(abr,abr->se);
+    }
+
+    detruire_noeud_aqr(branch);
+}
+
+
+void detruire_aqr(Un_noeud *abr)
+{
+    /* on crée une fonction recursive qui utilise d'autres fonctions intermédiaires */
+    if(abr != NULL)
+    {
+        detruire_branches(abr,abr->no);
+        detruire_branches(abr,abr->ne);
+        detruire_branches(abr,abr->so);
+        detruire_branches(abr,abr->se);
+    }
 }
 
 Un_truc *chercher_aqr(Un_noeud *aqr, Une_coord coord)
@@ -359,11 +390,21 @@ Un_elem *chercher_zone(Un_noeud *aqr, Un_elem *head, Une_coord limite_no, Une_co
     // si c'est dans la zone, on ajoute à la liste le truc de l'aqr courant
     head->truc = NULL;
     head->truc = (Un_truc *) malloc(sizeof(Un_truc));
+    if(!head->truc)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }
     head->truc = aqr->truc;
 
     // on passe au suivant
     head->suiv = NULL;
     head->suiv = (Un_elem *) malloc(sizeof(Un_elem));
+    if(!head->suiv)
+    {
+        printf("probleme allocation mémoire\n");
+        return NULL;
+    }
     head = head->suiv;
 
     if(aqr->no)

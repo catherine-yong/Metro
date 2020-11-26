@@ -1,11 +1,10 @@
 
-#include "liste.h"
-#include "station.h"
-#include "arbr_type.h"
+#include "header/liste.h"
+#include "header/station.h"
+#include "header/arbr_type.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <string.h>
 
 Un_nabr *creer_nabr(Un_truc *truc)
@@ -29,13 +28,7 @@ Un_nabr *inserer_abr(Un_nabr *abr, Un_nabr *node)
         return node;
     }
     
-    if(strcmp((node->truc->data).sta.nom , (abr->truc->data).sta.nom) == 0)
-    {
-        /* si c'est egal alors c'est la racine , on n'insere rien*/
-        return abr;
-    }
-    
-    if(strcmp((node->truc->data).sta.nom , (abr->truc->data).sta.nom) > 0)
+    if(strcmp((node->truc->data).sta.nom , (abr->truc->data).sta.nom) >= 0)
     {
         /* si c'est plus grand alors on place a droite */
         
@@ -48,8 +41,6 @@ Un_nabr *inserer_abr(Un_nabr *abr, Un_nabr *node)
         
         abr->g = inserer_abr(abr->g,node);
     }
-    
-    
     return abr;   
 }
 
@@ -63,6 +54,9 @@ Un_nabr *construire_abr(Un_elem *liste_sta)
         printf("probleme allocation mémoire\n");
         return NULL;
     }
+
+    head->g = NULL;
+    head->d = NULL;
 
     Un_nabr *node = NULL;
     node = (Un_nabr *) malloc(sizeof(Un_nabr));
@@ -78,7 +72,6 @@ Un_nabr *construire_abr(Un_elem *liste_sta)
     {
         node = creer_nabr(ptr->truc);
         head = inserer_abr(head,node);
-        printf("nonnon\n");
         ptr = ptr->suiv;
     }
 
@@ -146,30 +139,31 @@ void affiche_abr(Un_nabr *abr)
 
 Un_truc *chercher_station(Un_nabr *abr, char *nom)
 {
-    
+   
     /* si l'arbre est vide, on retourne NULL */
     if(!abr)
     {
-        printf("La station n'est pas dans la liste\n");
+        //printf("La station n'est pas dans la liste\n");
         return NULL;
     }
 
-    if(strcmp(abr->truc->data.sta.nom , nom) > 0)
+    if(strcmp(((abr->truc->data).sta).nom , nom) > 0)
     {
         /* on cherche au niveau du fils droit */
         return chercher_station(abr->d,nom);
     }
-
-    else if (strcmp(abr->truc->data.sta.nom , nom) < 0)
+    
+    if (strcmp(((abr->truc->data).sta).nom , nom) < 0)
     {
         /* on cherche au niveau du fils gauche */
         return chercher_station(abr->g,nom);
+    
     }
 
     else
     {
-        /* dans ce cas, le noeud recherché est simplement la racine */
-        //printf("La station est bien dans la liste\n");
+        /* on a trouvé la station */
         return abr->truc;
     }
+
 }

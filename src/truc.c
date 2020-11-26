@@ -1,5 +1,5 @@
-#include "truc.h"
-#include "coord.h"
+#include "header/truc.h"
+#include "header/coord.h"
 #include <stdlib.h>
 
 Un_truc *creer_truc(Une_coord coord, Ttype type, Tdata data, double uv)
