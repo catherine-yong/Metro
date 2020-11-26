@@ -12,7 +12,6 @@ Un_elem *lire_stations(char *nom_fichier)
     char *ptr_ligne;
     const char *separator = ";";
     size_t size = 0;
-    
     Un_elem *head = NULL;
     head = (Un_elem*) malloc(sizeof(Un_elem));
     Un_elem *phead = head;
@@ -97,7 +96,7 @@ Un_elem *lire_stations(char *nom_fichier)
             return NULL;
         }
 
-        /*affichage 
+        /*affichage
         printf("\n nom de la station : %s\n",((head->truc->data).sta).nom);
         printf("longitude : %f\n",(head->truc->coord).lon);
         printf("latitude : %F\n", (head->truc->coord).lat)
@@ -123,7 +122,7 @@ Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
 {
     /* on veut inserer le truc dans la liste de maniere croissante*/
 
-    // si truc est vide on ne fait rien 
+    // si truc est vide on ne fait rien
     if(!truc)
     {
         printf("rien à insérer\n");
@@ -171,7 +170,7 @@ Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
         head = nouv_element;
     }
     
-    /* si l'element a inserer est au milieu de la liste ou a la fin, alors on parcourt jusqu'au bon rand de user_valur 
+    /* si l'element a inserer est au milieu de la liste ou a la fin, alors on parcourt jusqu'au bon rand de user_valur
     c'est a dire une fois que user_value de l'element est plus petit que user_valeur du pointeur sur la liste, ou quand on est a la fin de la liste */
 
     nouv_element->suiv = (Un_elem *) malloc(sizeof(Un_elem));
@@ -184,7 +183,7 @@ Un_elem *inserer_liste_trie(Un_elem *head, Un_truc *truc)
     while (current->suiv != NULL && current->suiv->truc->user_val <= truc->user_val)
     {
         current = current->suiv;
-    } 
+    }
     nouv_element->suiv = current->suiv;
     current->suiv = nouv_element;
     
@@ -266,7 +265,7 @@ Un_elem *inserer_deb_liste(Un_elem *head, Un_truc *truc)
     new_head->suiv = head;
 
     return new_head;
-}   
+}
 
 
 void limites_zone(Un_elem *head, Une_coord *limite_no, Une_coord *limite_se)
@@ -284,29 +283,29 @@ void limites_zone(Un_elem *head, Une_coord *limite_no, Une_coord *limite_se)
     /* si on trouve un élément plus petit (resp. grand) que le minimum définit (resp. maximum) alors on procède à un échange */
     
     while(phead)
-    {   
+    {
         /* on compare avec la longitude minimale */
-        if(phead->truc->coord.lon < longitude_min)
+        if(((phead->truc)->coord).lon < longitude_min)
         {
             longitude_min = phead->truc->coord.lon;
         }
 
         /* on compare avec la longitude maximale */
-        if(phead->truc->coord.lon > longitude_max)
+        if(((phead->truc)->coord).lon > longitude_max)
         {
-            longitude_max = phead->truc->coord.lon;
+            longitude_max = ((phead->truc)->coord).lon;
         }
 
         /* on compare avec la latitude minimale */
-        if(phead->truc->coord.lon < latitude_min)
+        if(((phead->truc)->coord).lon < latitude_min)
         {
-            latitude_min = phead->truc->coord.lat;
+            latitude_min = ((phead->truc)->coord).lat;
         }
 
         /* on compare avec la latitude maximale */
-        if(phead->truc->coord.lon > latitude_max)
+        if(((phead->truc)->coord).lon > latitude_max)
         {
-            latitude_max = phead->truc->coord.lat;
+            latitude_max = ((phead->truc)->coord).lat;
         }
 
         /* on avance dans la liste */
@@ -339,23 +338,45 @@ void limites_zone(Un_elem *head, Une_coord *limite_no, Une_coord *limite_se)
 
 }
 
-Un_elem *lire_connexions(char *nom_fichier, Une_ligne *liste_ligne, Un_nabr *abr_sta)
+Une_ligne* chercher_ligne(Une_ligne *head, char *code)
+{
+ 
+    while ((strcmp(head->code, code) != 0) && head->suiv != NULL)
+    {
+        head = head -> suiv;
+    }
+
+    if(strcmp(head->code , code) == 0)
+    {
+        printf("La ligne est bien présente.\n");
+        return head;
+    }
+
+    else
+    {
+        printf("La ligne n'est pas présente.\n");
+        return NULL;
+    }
+    
+}
+
+Un_elem *lire_connexions(char *nom_fichier, Une_ligne* liste_ligne, Un_nabr *abr_sta)
 {
 
-    FILE* fichier;      
-    char *csv = "../connexions.csv";  
-    char *ptr_chaine ; 
-    int num_ligne = 1; 
+    FILE* fichier;
+    //char *csv = "../connexions.csv";
+    char *ptr_chaine ;
+    int num_ligne = 1;
 
     // Initialisation des données que l'on veut récupérer à chaque ligne
 
-    char *code_ligne; 
-    char *nom_station_dep; 
-    char *nom_station_arr; 
-    float intervalle;        
+    char* code_ligne;
+    char* nom_station_dep;
+    char* nom_station_arr;
+    float intervalle;
 
     //Ouverture du fichier de données csv
-    fichier = fopen( csv, "r") ; // Ouverture du fichier en lecture seule
+    fichier = fopen("connexions.csv", "r") ; // Ouverture du fichier en lecture seule
     if (fichier ==NULL)
     {
             printf("\nERREUR : Ouverture du fichier impossible\n");
@@ -363,10 +384,10 @@ Un_elem *lire_connexions(char *nom_fichier, Une_ligne *liste_ligne, Un_nabr *abr
     }
 
     char* ptr_ligne = NULL;
-    size_t size = 0;    
-    char* line = NULL;
+    size_t size = 0;
+    //char* line = NULL;
 
-    Une_ligne *head_con = NULL;
+    Une_ligne* head_con = NULL;
     Un_elem* phead = head_con;
     Un_elem* pphead = head_con;
 
@@ -377,36 +398,36 @@ Un_elem *lire_connexions(char *nom_fichier, Une_ligne *liste_ligne, Un_nabr *abr
         num_ligne++ ;
         
         // ligne de metro
-        ptr_chaine = strtok (ptr_ligne, ";"); 
+        ptr_chaine = strtok (ptr_ligne, ";");
         code_ligne = (char *)malloc((strlen(ptr_chaine)+1)*sizeof(char));
 
         if(!code_ligne)
         {
             printf("probleme allocation mémoire\n");
-            fclose(csv);
+            fclose(fichier); // fclose(csv)
         }
 
         strcpy(code_ligne , ptr_chaine);
 
-        // station de depart 
+        // station de depart
         ptr_chaine = strtok (NULL, ";");
         nom_station_dep = (char *)malloc((strlen(ptr_chaine)+1)*sizeof(char));
 
         if(!nom_station_dep)
         {
             printf("probleme allocation mémoire\n");
-            fclose(csv);
+            fclose(fichier); //fclose (cvs)
         }
 
         strcpy(nom_station_dep , ptr_chaine);
 
-        // station d'arrivee        
+        // station d'arrivee
         ptr_chaine = strtok (NULL, ";");
         nom_station_arr = (char *)malloc((strlen(ptr_chaine)+1)*sizeof(char));
         if(!nom_station_arr)
         {
             printf("probleme allocation mémoire\n");
-            fclose(csv);
+            fclose(fichier); //fclose (cvs)
         }
 
         strcpy(nom_station_arr , ptr_chaine);
@@ -418,7 +439,8 @@ Un_elem *lire_connexions(char *nom_fichier, Une_ligne *liste_ligne, Un_nabr *abr
         // Création d'un truc aller
 
         // On récupère les informations en les cherchant soit dans liste_ligne soit dans abr_sta (car on cherche à avoir des pointeurs)
-        Une_ligne* ligne = chercher_ligne(liste_ligne,code_ligne);
+        Une_ligne* ligne = NULL;
+        ligne = chercher_ligne(liste_ligne,code_ligne);
         Un_truc* station_depart = chercher_station(abr_sta,nom_station_dep);
         Un_truc* station_arrivee = chercher_station(abr_sta,nom_station_arr);
 
@@ -428,23 +450,25 @@ Un_elem *lire_connexions(char *nom_fichier, Une_ligne *liste_ligne, Un_nabr *abr
             printf("\nErreur dans l'allocation mémoire\n");
             return NULL;
         }
-        truc_aller->data.con.sta_dep = station_depart;
-        truc_aller->data.con.sta_arr = station_arrivee;
-        truc_aller->data.con.ligne = ligne;
+        (truc_aller->data).con.sta_dep = station_depart;
+        (truc_aller->data).con.sta_arr = station_arrivee;
+        (truc_aller->data).con.ligne = ligne;
         truc_aller->user_val = intervalle;
 
-        truc_aller->data.con.sta_dep->data.sta.nb_con += 1;
-        truc_aller->data.con.sta_dep->data.sta.tab_con = realloc(truc_aller->data.con.sta_dep->data.sta.tab_con, ((truc_aller->data.con.sta_dep->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
-        truc_aller->data.con.sta_dep->data.sta.tab_con[truc_aller->data.con.sta_dep->data.sta.nb_con] = station_arrivee;
+        (truc_aller->data).con.sta_dep->data.sta.nb_con += 1;
+        (truc_aller->data).con.sta_dep->data.sta.tab_con = realloc((truc_aller->data).con.sta_dep->data.sta.tab_con, (((truc_aller->data).con.sta_dep->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
+        (truc_aller->data).con.sta_dep->data.sta.tab_con[truc_aller->data.con.sta_dep->data.sta.nb_con] = station_arrivee;
 
-        truc_aller->data.con.sta_arr->data.sta.nb_con += 1;
-        truc_aller->data.con.sta_arr->data.sta.tab_con = realloc( truc_aller->data.con.sta_arr->data.sta.tab_con, (( truc_aller->data.con.sta_arr->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
-        truc_aller->data.con.sta_arr->data.sta.tab_con[ truc_aller->data.con.sta_arr->data.sta.nb_con] = station_depart;
+        (truc_aller->data).con.sta_arr->data.sta.nb_con += 1;
+        (truc_aller->data).con.sta_arr->data.sta.tab_con = realloc( (truc_aller->data).con.sta_arr->data.sta.tab_con, (( (truc_aller->data).con.sta_arr->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
+        (truc_aller->data).con.sta_arr->data.sta.tab_con[ (truc_aller->data).con.sta_arr->data.sta.nb_con] = station_depart;
         
-        // on ajoute le truc a la liste 
+        // on ajoute le truc a la liste
 
-        inserer_liste_trie(head_con,truc_aller);
+        inserer_liste_trie(phead,truc_aller);
+        //inserer_liste_trie(head_con,truc_aller);
 
+    
         // on fait le retour
         Un_truc* truc_retour = (Un_truc*)malloc(sizeof(Un_truc));
         if(truc_retour == NULL)
@@ -452,22 +476,23 @@ Un_elem *lire_connexions(char *nom_fichier, Une_ligne *liste_ligne, Un_nabr *abr
             printf("\nErreur dans l'allocation mémoire\n");
             return NULL;
         }
-        truc_retour->data.con.sta_dep = station_arrivee;
-        truc_retour->data.con.sta_arr = station_depart;
-        truc_retour->data.con.ligne = ligne;
+        (truc_retour->data).con.sta_dep = station_arrivee;
+        (truc_retour->data).con.sta_arr = station_depart;
+        (truc_retour->data).con.ligne = ligne;
         truc_retour->user_val = intervalle;
 
-        truc_retour->data.con.sta_dep->data.sta.nb_con += 1;
-        truc_retour->data.con.sta_dep->data.sta.tab_con = realloc(truc_retour->data.con.sta_dep->data.sta.tab_con, ((truc_retour->data.con.sta_dep->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
-        truc_retour->data.con.sta_dep->data.sta.tab_con[truc_retour->data.con.sta_dep->data.sta.nb_con] = station_arrivee;
+        (truc_retour->data).con.sta_dep->data.sta.nb_con += 1;
+        (truc_retour->data).con.sta_dep->data.sta.tab_con = realloc((truc_retour->data).con.sta_dep->data.sta.tab_con, (((truc_retour->data).con.sta_dep->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
+        (truc_retour->data).con.sta_dep->data.sta.tab_con[(truc_retour->data).con.sta_dep->data.sta.nb_con] = station_arrivee;
 
-        truc_retour->data.con.sta_arr->data.sta.nb_con += 1;
-        truc_retour->data.con.sta_arr->data.sta.tab_con = realloc( truc_retour->data.con.sta_arr->data.sta.tab_con, (( truc_retour->data.con.sta_arr->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
-        truc_retour->data.con.sta_arr->data.sta.tab_con[ truc_retour->data.con.sta_arr->data.sta.nb_con] = station_depart;
+        (truc_retour->data).con.sta_arr->data.sta.nb_con += 1;
+        (truc_retour->data).con.sta_arr->data.sta.tab_con = realloc( (truc_retour->data).con.sta_arr->data.sta.tab_con, (( (truc_retour->data).con.sta_arr->data.sta.nb_con+1)*sizeof(Une_connexion*)));    // Avec realloc, on modifie la taille du tableau des connexions
+        (truc_retour->data).con.sta_arr->data.sta.tab_con[ (truc_retour->data).con.sta_arr->data.sta.nb_con] = station_depart;
 
-        // on ajoute le truc a la liste 
+        // on ajoute le truc a la liste
 
-        inserer_liste_trie(head_con,truc_retour);
+        inserer_liste_trie(phead,truc_retour);
+        //inserer_liste_trie(head_con,truc_retour);
         
 
     }
@@ -475,3 +500,4 @@ Un_elem *lire_connexions(char *nom_fichier, Une_ligne *liste_ligne, Un_nabr *abr
     fclose(fichier);
     return phead;
 }
+
