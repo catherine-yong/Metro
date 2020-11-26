@@ -7,6 +7,7 @@ COMPILE = $(CC) $(CCFLAGS)  -o $@
 all: $(PROGRAMS)
 
 Main : main.c truc.c liste.c lire_station.c abr.c lire_ligne.c dijkstra.c truc.h coord.h liste.h station.h aqrtopo.h (? à revoir le nom) 
+	$(COMPILE) main.c
 
 Truc : truc.c truc.h coord.h
 	$(COMPILE) truc.c
