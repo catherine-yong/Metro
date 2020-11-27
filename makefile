@@ -2,6 +2,7 @@
 main : main.o abr.o aqrtopo.o liste.o station.o truc.o
 	gcc main.o abr.o aqrtopo.o liste.o station.o truc.o -o main
 	make clean
+48.89200565400341, 2.236983123817432
 
 main.o : main.c *.h
 	gcc -c main.c
